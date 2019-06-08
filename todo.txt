@@ -1,0 +1,1 @@
+-esvazia lista de fórmulas indevidamente se não há nenhuma fórmula que satisfaz a regra
