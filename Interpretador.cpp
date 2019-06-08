@@ -6,8 +6,13 @@ bool Interpretador::adicionaAtomo(string lexema) {
 
     list<FormulaAtomica>::iterator iterador = atomos.begin();
     bool novo = true;
+
     while (iterador != atomos.end()) {
-        if(iterador->nome.compare(lexema) == 0) novo = false;
+    
+        if(iterador->nome.compare(lexema) == 0) {
+            novo = false;
+            break;
+        }
         ++iterador;
     }
 
@@ -15,7 +20,7 @@ bool Interpretador::adicionaAtomo(string lexema) {
 
     if (novo) atomos.emplace_back(lexema);
     
-    return novo ;
+    return novo;
 }
 
 list<Token> Interpretador::lerTokens() {

@@ -84,12 +84,12 @@ void FormulaBinaria::valorar(Valor v){
 
     valor = v;
 
-    if (operador.tipo == E || operador.tipo == OU) //T&, F&, T| e F|: esquerda e direita recebem o mesmo valor que o da fórmula atual
-        esquerda->valor = valor;
+    if (operador.tipo == E || operador.tipo == OU) //T&, F&, T| e F|: esquerda e direita recebem o mesmo valor que a fórmula atual
+        esquerda->valorar(valor);
     else //F> e T> : esquerda com valor oposto, direita com mesmo valor
-        esquerda->valor = ((valor == V) ? F : V);
+        esquerda->valorar((valor == V) ? F : V);
 
-    direita->valor = valor;
+    direita->valorar(valor);
 
 }
 
@@ -149,7 +149,7 @@ void FormulaUnaria::valorar(Valor v){
     //independente da regra ser T- ou F-, o que acontece é que o operando é expandido com o valor inverso do valor da atual
     valor = v;
 
-    esquerda->valor = ((v == V) ? F : V);
+    esquerda->valorar(((v == V) ? F : V));
 
 }
 

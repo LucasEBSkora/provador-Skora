@@ -324,16 +324,20 @@ list<FormulaAtomica> Provador::Resolver(){
         //além disso, se ele não estiver fechado, adiciona-o na lista de ramos
         //se estiver fechado, deleta-o
         if (novoRamo != NULL) {
+
+            //coloca o novo ramo após o ramo de onde ele veio, e incrementa a posição de todos os ramos depois
+            //(mesmo se o ramo já começar fechado, para manter a numeração consistente)
+            list<Ramo*>::iterator i = Ramos.insert(ramoEscolhido, novoRamo);
+            ++i;
+            while (i != Ramos.end()) {
+                ++(*(i++))->posicao;
+            }
+
             estadoRamo estadoNovoRamo = novoRamo->avaliar();
             if (estadoNovoRamo == ramo_aberto) return novoRamo->gerarValoracao(valoracaoContraExemplo);
             else if (estadoNovoRamo == ramo_insaturado) {
 
-                //coloca o novo ramo após o ramo de onde ele veio, e incrementa a posição de todos os ramos depois
-                list<Ramo*>::iterator i = Ramos.insert(ramoEscolhido, novoRamo);
-                ++i;
-                while (i != Ramos.end()) {
-                    ++(*(i++))->posicao;
-                }
+
             }
             else delete novoRamo;
         }

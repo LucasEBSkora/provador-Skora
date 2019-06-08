@@ -3,13 +3,36 @@
 Ramo::Ramo(list<FormulaMarcada*> ListaFormulas) 
     : listaFormulas{ListaFormulas}, 
     proxNumeroOrdem{ListaFormulas.size() + 1},
-    posicao{1} {};
+    posicao{1}, expandidas{list<FormulaMarcada*>()} {};
         
 Ramo::Ramo(Ramo *ramo, FormulaMarcada* formula) 
     : listaFormulas{ramo->listaFormulas}, 
     proxNumeroOrdem{ramo->proxNumeroOrdem}, 
-    posicao{ramo->posicao + 1} {
+    posicao{ramo->posicao + 1}, expandidas{ramo->expandidas} {
     listaFormulas.push_back(formula); 
+}
+
+bool Ramo::adicionaExpandidas(FormulaMarcada* formula) {
+
+    //itera a lista de fórmulas já expandidas procurando por alguma fórmula idêntica
+
+    list<FormulaMarcada*>::iterator iterador = expandidas.begin();
+    bool novo = true;
+
+    while (iterador != expandidas.end()) {
+        if (formula->eIgual(*iterador) ) {
+            novo = false;
+            break;
+        }
+        ++iterador;
+    }
+
+    //se não houver, adiciona o novo na lista
+    if (novo) {
+        expandidas.push_back(formula);
+    }
+    
+    return novo;
 }
 
 string Ramo::imprime() {
@@ -17,6 +40,11 @@ string Ramo::imprime() {
     RamoImpresso = to_string(posicao) + ":\n"; 
     for (list<FormulaMarcada*>::iterator formula = listaFormulas.begin(); formula != listaFormulas.end(); ++formula) {
          RamoImpresso += "\t" + to_string((**formula).ordem) + ": " + (**formula).escreveValorada() + 
+         " Tamanho: " + to_string((**formula).tamanho()) + "\n";
+            
+    }
+    for (list<FormulaMarcada*>::iterator formula = expandidas.begin(); formula != expandidas.end(); ++formula) {
+         RamoImpresso += "\t\t" + to_string((**formula).ordem) + ": " + (**formula).escreveValorada() + 
          " Tamanho: " + to_string((**formula).tamanho()) + "\n";
             
     }
@@ -312,7 +340,9 @@ Ramo* Ramo::aplicar(list<tiposEstrategia> lista){
     }
 
     if (formulaEscolhida) {
-        
+
+        adicionaExpandidas(formulaEscolhida);
+
         cout << "\tRegra " <<  (formulaEscolhida->valor == V ? "V" : "F") << formulaEscolhida->operador.lexema
         << " aplicada na formula \"" << formulaEscolhida->escreve() << "\" no ramo " << posicao << ": \n";
 
@@ -375,13 +405,19 @@ estadoRamo Ramo::avaliar(){
     //se existe no ramo alguma fórmula marcada simultaneamente como V e como F, o ramo está fechado:
     //como duas fórmulas iguais podem surgir de fórmulas diferentes, é preciso checar se todos os operadores e átomos são idênticos
     //para garantir que as fórmulas são iguais. Entretanto, isso pode ser feito comparando a maneira com a qual as duas fórmulas são escritas.
-
-    list<FormulaMarcada*>::iterator formula;
     
     //mapa de cada fórmula escrita e de seu valor
     unordered_map<string, Valor> paresFormulaValor = unordered_map<string, Valor>();
 
-    for (formula = listaFormulas.begin(); formula != listaFormulas.end(); ++formula) {
+    //adiciona as fórmulas já expandidas ao mapa 
+
+    for (list<FormulaMarcada*>::iterator formula = expandidas.begin(); formula != expandidas.end(); ++formula) {
+
+        paresFormulaValor.insert({(**formula).escreve(), (**formula).valor});
+
+    }
+
+    for (list<FormulaMarcada*>::iterator formula = listaFormulas.begin(); formula != listaFormulas.end(); ++formula) {
 
         //recupera a fórmula escrita
         string formulaEscrita = (**formula).escreve();
@@ -400,10 +436,11 @@ estadoRamo Ramo::avaliar(){
 
     }
 
+    
     //se nenhuma regra pode ser aplicada, o ramo está aberto
     bool algumaRegra = false;
 
-    for (formula = listaFormulas.begin(); formula != listaFormulas.end(); ++formula) {
+    for (list<FormulaMarcada*>::iterator formula = listaFormulas.begin(); formula != listaFormulas.end(); ++formula) {
         //descobre se uma regra linear ou que bifurca (ou seja, qualquer regra) pode ser aplicada na fórmula
         if ( (**formula).tipoRegra() != est_inv) {
             algumaRegra = true;
