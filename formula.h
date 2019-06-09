@@ -35,14 +35,16 @@ class FormulaMarcada {
 
     public :
         Valor valor = IND;
-        virtual int tamanho() = 0; //função que retorna o tamanho da fórmula
-        virtual string escreve() = 0; //função que retorna uma string representando a fórmula
-        string nome = ""; //para fórmulas atômicas, representa o nome do átomo
-        FormulaMarcada *esquerda = NULL, *direita = NULL;//para operadores binários, a fórmula à esquerda e a fórmula à direita.
-                                           //os operadores unários usam apenas esquerda
-        Token operador;
-        unsigned int ordem; //guarda o número de ordem da fórmula
-        TiposFormula tipo; //tipo da fórmula
+    
+        //função que retorna o tamanho da fórmula
+        virtual int tamanho() = 0; 
+
+        //função que retorna uma string representando a fórmula
+        virtual string escreve() = 0; 
+
+        //guarda o número de ordem da fórmula
+        unsigned int ordem; 
+        TiposFormula tipo; 
 
         //expande a fórmula e guarda. A primeira posição de resultado será a fórmula "à esquerda", e a segunda (se houver) a "à direita"
         virtual void expandir(FormulaMarcada** resultado) = 0;
@@ -59,7 +61,10 @@ class FormulaMarcada {
         //retorna se a fórmula é igual a outra (mesmo valor e escrita do mesmo jeito)
         bool eIgual(FormulaMarcada *outra);
 
-        virtual ~FormulaMarcada();
+        //Escreve o nome da regra que seria aplicada na fórmula
+        virtual string nomeRegra() = 0;
+
+        ~FormulaMarcada();
 
         virtual string escreveValorada();
 
@@ -68,8 +73,11 @@ class FormulaMarcada {
 
 
 class FormulaAtomica : public FormulaMarcada {
+    private:
+        string nome;
+    
     public:
-        
+
         FormulaAtomica(string Nome);
         int tamanho() override;
         string escreve() override;
@@ -77,30 +85,45 @@ class FormulaAtomica : public FormulaMarcada {
         tiposEstrategia tipoRegra() override;
         bool contemOp(tiposToken op) override;
         void valorar(Valor V) override;
+        string nomeRegra() override;
+
+
 };
 
 class FormulaBinaria : public FormulaMarcada {
+    private: 
+        FormulaMarcada *esquerda, *direita;
+        Token operador;
+
     public:
 
         FormulaBinaria(FormulaMarcada *Esquerda, tiposToken op,  FormulaMarcada *Direita);
+        ~FormulaBinaria();
         int tamanho() override;
         string escreve() override;
         void expandir(FormulaMarcada** resultado) override;
         tiposEstrategia tipoRegra() override;
         bool contemOp(tiposToken op) override;
         void valorar(Valor V) override;
+        string nomeRegra() override;
 };
 
 class FormulaUnaria : public FormulaMarcada {
+    private:
+        FormulaMarcada* formula;
+        Token operador = {NEGACAO, '-'};
+
     public:
 
-        FormulaUnaria(FormulaMarcada *Esquerda);
+        FormulaUnaria(FormulaMarcada *Formula);
+        ~FormulaUnaria();
         int tamanho() override;
         string escreve() override;
         void expandir(FormulaMarcada** resultado) override;
         tiposEstrategia tipoRegra() override;
         bool contemOp(tiposToken op) override;
         void valorar(Valor V) override;
+        string nomeRegra() override;
 };
 
 #endif

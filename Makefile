@@ -12,7 +12,7 @@ INCLUDE_PATHS =
 LIBRARY_PATHS =
 
 #COMPILER_FLAGS specifies the additional compilation options we're using
-COMPILER_FLAGS = -Wall -Wextra -Wsign-conversion -Weffc++
+COMPILER_FLAGS = #-Wall -Wextra -Wsign-conversion -Weffc++
 
 #LINKER_FLAGS specifies the libraries we're linking against
 LINKER_FLAGS =

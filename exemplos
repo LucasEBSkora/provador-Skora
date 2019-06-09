@@ -4,3 +4,7 @@ lm
 B | A, B > C | D, A > C | D = C | D
 
 lMe
+
+(-P > (Q|R)), (R|S), (Q > (Q & (R | -S))) = -(P & -(Q & --R))
+
+ld&m

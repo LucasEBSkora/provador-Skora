@@ -1,14 +1,18 @@
 #include "ramo.h"
 
+using namespace std;
+
 Ramo::Ramo(list<FormulaMarcada*> ListaFormulas) 
     : listaFormulas{ListaFormulas}, 
+    expandidas{list<FormulaMarcada*>()},
     proxNumeroOrdem{ListaFormulas.size() + 1},
-    posicao{1}, expandidas{list<FormulaMarcada*>()} {};
+    posicao{1} {};
         
 Ramo::Ramo(Ramo *ramo, FormulaMarcada* formula) 
     : listaFormulas{ramo->listaFormulas}, 
-    proxNumeroOrdem{ramo->proxNumeroOrdem}, 
-    posicao{ramo->posicao + 1}, expandidas{ramo->expandidas} {
+    expandidas{ramo->expandidas}, 
+    proxNumeroOrdem{ramo->proxNumeroOrdem + 1}, 
+    posicao{ramo->posicao + 1} {
     listaFormulas.push_back(formula); 
 }
 
@@ -36,16 +40,17 @@ bool Ramo::adicionaExpandidas(FormulaMarcada* formula) {
 }
 
 string Ramo::imprime() {
+
     string RamoImpresso = " ";
     RamoImpresso = to_string(posicao) + ":\n"; 
     for (list<FormulaMarcada*>::iterator formula = listaFormulas.begin(); formula != listaFormulas.end(); ++formula) {
-         RamoImpresso += "\t" + to_string((**formula).ordem) + ": " + (**formula).escreveValorada() + 
-         " Tamanho: " + to_string((**formula).tamanho()) + "\n";
+        RamoImpresso += "\t" + to_string((**formula).ordem) + ": " + (**formula).escreveValorada() + 
+        " Tamanho: " + to_string((**formula).tamanho()) + "\n";
             
     }
     for (list<FormulaMarcada*>::iterator formula = expandidas.begin(); formula != expandidas.end(); ++formula) {
-         RamoImpresso += "\t\t" + to_string((**formula).ordem) + ": " + (**formula).escreveValorada() + 
-         " Tamanho: " + to_string((**formula).tamanho()) + "\n";
+        RamoImpresso += "\t\t" + to_string((**formula).ordem) + ": " + (**formula).escreveValorada() + 
+        " Tamanho: " + to_string((**formula).tamanho()) + "\n";
             
     }
     return RamoImpresso;
@@ -343,7 +348,7 @@ Ramo* Ramo::aplicar(list<tiposEstrategia> lista){
 
         adicionaExpandidas(formulaEscolhida);
 
-        cout << "\tRegra " <<  (formulaEscolhida->valor == V ? "V" : "F") << formulaEscolhida->operador.lexema
+        cout << "\tRegra " <<  formulaEscolhida->nomeRegra()
         << " aplicada na formula \"" << formulaEscolhida->escreve() << "\" no ramo " << posicao << ": \n";
 
 
@@ -381,12 +386,12 @@ Ramo* Ramo::aplicar(list<tiposEstrategia> lista){
             //cria o novo ramo adicionando a fórmula da direita, e adiciona a fórmula da esquerda ao ramo antigo
 
             if (novasFormulas[1]) {
-                novasFormulas[1]->ordem = proxNumeroOrdem++; //adiciona o número de ordem da fórmula 
+                novasFormulas[1]->ordem = proxNumeroOrdem; //adiciona o número de ordem da fórmula  (sem incrementar pois essa fórmula irá para outro ramo)
 
                 novoRamo = new Ramo(this, novasFormulas[1]);
             }
             if (novasFormulas[0]) {
-                novasFormulas[0]->ordem = proxNumeroOrdem; //adiciona o número de ordem da fórmula (sem incrementar pois essa fórmula irá para outro ramo)
+                novasFormulas[0]->ordem = proxNumeroOrdem++; //adiciona o número de ordem da fórmula
                 listaFormulas.push_back(novasFormulas[0]);
             }
 
@@ -470,7 +475,7 @@ list<FormulaAtomica> Ramo::gerarValoracao(list<FormulaAtomica> atomos){
 
             for (list<FormulaAtomica>::iterator atomo = atomos.begin(); atomo != atomos.end(); ++atomo) {
 
-                if ((**formula).nome.compare(atomo->nome) == 0) {
+                if ((**formula).escreve().compare(atomo->escreve()) == 0) {
                     atomo->valor = (**formula).valor;
                 }
             }

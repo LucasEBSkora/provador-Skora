@@ -1,5 +1,7 @@
 #include "provador.h"
 
+using namespace std;
+
 list<Ramo*>::iterator Provador::EncontrarRamo(){
 
     if (Ramos.size() == 0) return Ramos.end();
@@ -7,10 +9,13 @@ list<Ramo*>::iterator Provador::EncontrarRamo(){
 
     list<Ramo*> candidatos = Ramos;
 
+    
+
     //iterador para percorrer a lista - estratégia
     list<tiposEstrategia>::iterator estrategiaAtual = estrategia.begin();
 
     while (estrategiaAtual != estrategia.end()) {
+        
         switch (*estrategiaAtual) {
 
         case est_esq : //se a estratégia for escolher o candidato mais a esquerda, elimina todos os outros candidatos
@@ -46,12 +51,13 @@ list<Ramo*>::iterator Provador::EncontrarRamo(){
 
         default:
             erro = true;
-            cout << "Erro! Tipo de estratégia inválida encontrada!\n";
             break;
         }
 
         //se só há um candidato restante, é nele onde a regra será aplicada
         if (candidatos.size() == 1) {
+            
+            
             list<Ramo*>::iterator iterador = Ramos.begin();
 
             //encontra o iterador para o ramo na lista original. se não encontrar, houve erro
@@ -290,12 +296,11 @@ list<FormulaAtomica> Provador::Resolver(){
     bool tabloTerminado = false;
 
     while (!tabloTerminado) {
-
+        
         for (list<Ramo*>::iterator ramo = Ramos.begin(); ramo != Ramos.end(); ++ramo) cout <<  (**ramo).imprime() << "\n";
         
-
         list<Ramo*>::iterator ramoEscolhido = EncontrarRamo();
-
+        
         if (erro) break;
 
         //se não há mais ramos onde alguma regra pode ser aplicada, o tablô está fechado
@@ -306,7 +311,7 @@ list<FormulaAtomica> Provador::Resolver(){
 
 
         Ramo* novoRamo = (*ramoEscolhido)->aplicar(estrategia);
-
+        
         if (erro) break;
 
         //se o ramo onde a estratégia foi aplicada está aberto e saturado, o sequente é inválido, então uma valoração contra exemplo é criada
@@ -325,20 +330,16 @@ list<FormulaAtomica> Provador::Resolver(){
         //se estiver fechado, deleta-o
         if (novoRamo != NULL) {
 
-            //coloca o novo ramo após o ramo de onde ele veio, e incrementa a posição de todos os ramos depois
-            //(mesmo se o ramo já começar fechado, para manter a numeração consistente)
-            list<Ramo*>::iterator i = Ramos.insert(ramoEscolhido, novoRamo);
-            ++i;
+            //incrementa a posição de todos os ramos depois do novo ramo(mesmo se o ramo já começar fechado, para manter a numeração consistente)
+            
+            list<Ramo*>::iterator i = ramoEscolhido;
             while (i != Ramos.end()) {
-                ++(*(i++))->posicao;
+                ++(**(i++)).posicao;
             }
 
             estadoRamo estadoNovoRamo = novoRamo->avaliar();
             if (estadoNovoRamo == ramo_aberto) return novoRamo->gerarValoracao(valoracaoContraExemplo);
-            else if (estadoNovoRamo == ramo_insaturado) {
-
-
-            }
+            else if (estadoNovoRamo == ramo_insaturado) Ramos.insert(ramoEscolhido, novoRamo);
             else delete novoRamo;
         }
 

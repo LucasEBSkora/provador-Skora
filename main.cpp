@@ -50,14 +50,14 @@ int main () {
 
     //imprime as fórmulas, seus tamanhos, valores e números de ordem
     for(list<FormulaMarcada*>::iterator i = listaFormulas.begin(); i != listaFormulas.end(); ++i) {
-        cout << (**i).ordem << ": " << (**i).escreveValorada() << " Tamanho:" << (**i).tamanho() << "\n";
+        cout << (**i).ordem << ": " << (**i).escreveValorada() << " Tamanho:" << (**i).tamanho() << " " << (**i).contemOp(E) << "\n";
     }
     cout <<"\nAtomos : {" ;
 
     //imprime as fórmulas atômicas
 
     for(list<FormulaAtomica>::iterator atomo = interpretador.atomos.begin(); atomo != interpretador.atomos.end(); ++atomo) {
-        cout << atomo->nome << ", ";
+        cout << atomo->escreve() << ", ";
     }
 
     cout << "}\n\n";
@@ -94,9 +94,9 @@ int main () {
         cout << "\nRamo aberto e saturado: o sequente e falso!\nValoracao contra exemplo:\n";
 
         for(list<FormulaAtomica>::iterator atomo = valoracaoContraExemplo.begin(); atomo != valoracaoContraExemplo.end(); ++atomo) {
-            cout << "V(" << atomo->nome << ") = ";
+            cout << "V(" << atomo->escreve() << ") = ";
             if (atomo->valor == IND) cout << "indiferente\n";
-            else cout << (atomo->valor == V ? "V" : "F");
+            else cout << (atomo->valor == V ? "V\n" : "F\n");
         }
     }
 

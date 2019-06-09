@@ -20,7 +20,8 @@ class Ramo {
         
         //fórmulas que já foram expandidas, mas que podem ser usadas para fechar o ramo
         list<FormulaMarcada*> expandidas;
-        unsigned int proxNumeroOrdem;//número de ordem que será dado para a próxima fórmula adicionada no ramo
+        //número de ordem que será dado para a próxima fórmula adicionada no ramo
+        unsigned int proxNumeroOrdem;
 
         //adiciona uma fórmula na lista de fórmulas expandidas, evitando duplicatas
         bool adicionaExpandidas(FormulaMarcada* formula); 

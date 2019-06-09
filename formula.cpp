@@ -9,12 +9,12 @@ string FormulaMarcada::escreveValorada() {
 }
 
 FormulaMarcada::~FormulaMarcada() {
-    if (esquerda) delete esquerda;
-    if (direita) delete direita;
+
 }
 
-FormulaAtomica::FormulaAtomica(string Nome) {
-            nome = Nome;
+
+
+FormulaAtomica::FormulaAtomica(string Nome) : nome{Nome} {
             tipo = atomica;
 }
 
@@ -48,9 +48,12 @@ bool FormulaAtomica::contemOp(tiposToken op){
     return false;
 }
 
-FormulaBinaria::FormulaBinaria(FormulaMarcada *Esquerda, tiposToken op, FormulaMarcada *Direita){
+string FormulaAtomica::nomeRegra() {
+    return " ";
+}
+
+FormulaBinaria::FormulaBinaria(FormulaMarcada *Esquerda, tiposToken op, FormulaMarcada *Direita) : esquerda{Esquerda}, direita{Direita} {
     tipo = binaria;
-    esquerda = Esquerda;
 
     switch (op) {
         case E :
@@ -65,8 +68,12 @@ FormulaBinaria::FormulaBinaria(FormulaMarcada *Esquerda, tiposToken op, FormulaM
         default :
             break;
     }
+}
 
-    direita = Direita;
+
+FormulaBinaria::~FormulaBinaria() {
+    if (esquerda) delete esquerda;
+    if (direita) delete direita;
 }
 
 int FormulaBinaria::tamanho() {
@@ -122,25 +129,30 @@ bool FormulaBinaria::contemOp(tiposToken op){
 
     if (operador.tipo == op) return true;
     else if (esquerda->contemOp(op)) return true;
-    else if (esquerda->contemOp(op)) return true;
+    else if (direita->contemOp(op)) return true;
     else return false;
 
 }
 
+string FormulaBinaria::nomeRegra() {
+    return (valor == V ? "V" : "F") + operador.lexema;
+}
 
-FormulaUnaria::FormulaUnaria(FormulaMarcada *Esquerda) {
+FormulaUnaria::FormulaUnaria(FormulaMarcada *Formula) : formula{Formula} {
     tipo = unaria;
-    operador = Token(NEGACAO, '-');
-    esquerda = Esquerda;
+}
+
+FormulaUnaria::~FormulaUnaria() {
+    if (formula) delete formula;
 }
 
 int FormulaUnaria::tamanho() {
-    return esquerda->tamanho() + 1;
+    return formula->tamanho() + 1;
 }
 
 string FormulaUnaria::escreve(){
 
-    return operador.lexema + esquerda->escreve();
+    return operador.lexema + formula->escreve();
 
 }
 
@@ -149,7 +161,7 @@ void FormulaUnaria::valorar(Valor v){
     //independente da regra ser T- ou F-, o que acontece é que o operando é expandido com o valor inverso do valor da atual
     valor = v;
 
-    esquerda->valorar(((v == V) ? F : V));
+    formula->valorar(((v == V) ? F : V));
 
 }
 
@@ -160,11 +172,17 @@ tiposEstrategia FormulaUnaria::tipoRegra() {
 }
 
 void FormulaUnaria::expandir(FormulaMarcada** resultado) {
-    resultado[0] = esquerda;
+    resultado[0] = formula;
     resultado[1] = NULL;
 }
 
 bool FormulaUnaria::contemOp(tiposToken op){
 
-    return operador.tipo == op;
+    if (operador.tipo == op) return true;
+    else if (formula->contemOp(op)) return true;
+    else return false;
+}
+
+string FormulaUnaria::nomeRegra() {
+    return (valor == V ? "V" : "F") + operador.lexema;
 }

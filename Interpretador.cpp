@@ -9,7 +9,7 @@ bool Interpretador::adicionaAtomo(string lexema) {
 
     while (iterador != atomos.end()) {
     
-        if(iterador->nome.compare(lexema) == 0) {
+        if(iterador->escreve().compare(lexema) == 0) {
             novo = false;
             break;
         }
