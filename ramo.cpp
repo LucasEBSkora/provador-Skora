@@ -344,7 +344,7 @@ Ramo* Ramo::aplicar(list<tiposEstrategia> lista, unsigned int* proxNumeroOrdem){
         adicionaExpandidas(formulaEscolhida);
 
         cout << "\tRegra " <<  formulaEscolhida.formula->nomeRegra()
-        << " aplicada na formula \"" << formulaEscolhida.formula->escreve() << "\" no ramo " << posicao << ": \n";
+        << " aplicada na formula \"" << formulaEscolhida.formula->escreve() << "\"(" << formulaEscolhida.ordem <<  ")  no ramo " << posicao << ": \n";
 
 
         //armazena as novas fórmulas que serão geradas com a aplicação da regra

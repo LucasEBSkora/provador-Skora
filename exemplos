@@ -8,3 +8,8 @@ lMe
 (-P > (Q|R)), (R|S), (Q > (Q & (R | -S))) = -(P & -(Q & --R))
 
 ld&m
+bd&m
+
+(-P > Q), R | S, Q > (Q & (R | S)) = -(P & (Q & -R))
+
+le>m

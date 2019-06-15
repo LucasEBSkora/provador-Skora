@@ -51,7 +51,7 @@ int main () {
     //imprime as fórmulas, seus tamanhos, valores e números de ordem
     int contador = 1;
     for (list<FormulaMarcada*>::iterator i = listaFormulas.begin(); i != listaFormulas.end(); ++i) {
-        cout << contador << ": " << (**i).escreveValorada() << " Tamanho:" << (**i).tamanho();
+        cout << contador << ": " << (**i).escreveValorada() << " Tamanho:" << (**i).tamanho() << "\n";
         ++contador;
     }
     cout <<"\nAtomos : {" ;
