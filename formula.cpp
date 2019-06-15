@@ -14,9 +14,7 @@ FormulaMarcada::~FormulaMarcada() {
 
 
 
-FormulaAtomica::FormulaAtomica(string Nome) : nome{Nome} {
-            tipo = atomica;
-}
+FormulaAtomica::FormulaAtomica(string Nome) : nome{Nome} {}
 
 int FormulaAtomica::tamanho() {
     return 1;
@@ -52,24 +50,25 @@ string FormulaAtomica::nomeRegra() {
     return " ";
 }
 
-FormulaBinaria::FormulaBinaria(FormulaMarcada *Esquerda, tiposToken op, FormulaMarcada *Direita) : esquerda{Esquerda}, direita{Direita} {
-    tipo = binaria;
+FormulaBinaria::FormulaBinaria(FormulaMarcada *Esquerda, tiposToken op, FormulaMarcada *Direita) 
+    : esquerda{Esquerda}, direita{Direita}, operador{operadorDeTipo(op)} { }
 
-    switch (op) {
+Token FormulaBinaria::operadorDeTipo(tiposToken op) {
+        switch (op) {
         case E :
-            operador = Token(op, '&');
+            return Token(op, '&');
             break;
         case OU :
-            operador = Token(op, '|');
+            return Token(op, '|');
             break;
         case IMPLICA :
-            operador = Token(op, '>');
+            return Token(op, '>');
             break;
-        default :
+        default : //uma fórmula binária só pode ter um dos 3 operadores acima
+            return Token(op, "ERRO");
             break;
     }
 }
-
 
 FormulaBinaria::~FormulaBinaria() {
     if (esquerda) delete esquerda;
@@ -139,7 +138,7 @@ string FormulaBinaria::nomeRegra() {
 }
 
 FormulaUnaria::FormulaUnaria(FormulaMarcada *Formula) : formula{Formula} {
-    tipo = unaria;
+
 }
 
 FormulaUnaria::~FormulaUnaria() {
@@ -186,3 +185,19 @@ bool FormulaUnaria::contemOp(tiposToken op){
 string FormulaUnaria::nomeRegra() {
     return (valor == V ? "V" : "F") + operador.lexema;
 }
+
+FormulaOrdenada::FormulaOrdenada(FormulaMarcada* Formula, unsigned int Ordem) : formula{Formula}, ordem{Ordem} { }
+
+FormulaOrdenada::FormulaOrdenada() : formula{NULL}, ordem{0} {}
+
+list<FormulaOrdenada> FormulaOrdenada::gerarLista(list<FormulaMarcada*> listaFormulas) {
+    
+    list<FormulaOrdenada> listaOrdenada = list<FormulaOrdenada>();
+    int i = 1;
+    for (list<FormulaMarcada*>::iterator formula = listaFormulas.begin(); formula != listaFormulas.end(); ++formula) {
+        listaOrdenada.emplace_back(*formula, i);
+        ++i;
+    }
+    return listaOrdenada;
+}
+

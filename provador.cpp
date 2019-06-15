@@ -2,6 +2,9 @@
 
 using namespace std;
 
+Provador::Provador(list<FormulaMarcada*> ListaFormulas, list<FormulaAtomica> atomos)
+        : listaFormulas(ListaFormulas), valoracaoContraExemplo(atomos), proxNumOrdem{listaFormulas.size() + 1} {}
+
 list<Ramo*>::iterator Provador::EncontrarRamo(){
 
     if (Ramos.size() == 0) return Ramos.end();
@@ -102,7 +105,6 @@ void Provador::EncontrarLinBif(tiposEstrategia estrategiaAtual, list<Ramo*>* can
 
 }
 
-
 void Provador::EncontrarMenMai(tiposEstrategia estrategiaAtual, list<Ramo*>* candidatos) {
 
     //se a estratégia é encontrar o ramo que contenha a fórmula com menor/maior número de ordem
@@ -143,6 +145,45 @@ void Provador::EncontrarMenMai(tiposEstrategia estrategiaAtual, list<Ramo*>* can
     }
 
 }
+
+
+// void Provador::EncontrarMenMai(tiposEstrategia estrategiaAtual, list<Ramo*>* candidatos) {
+
+//     //se a estratégia é encontrar o ramo que contenha a fórmula com menor/maior número de ordem
+//     //descobre o ramo com o maior/menor número de ordem na lista e
+//     //remove da lista de candidatos todos os outros ramos
+
+
+//     list<unsigned int> numerosDeOrdemExtremos = list<unsigned int>();
+//     unsigned int numeroExtremo;
+
+//     list<Ramo*>::iterator iterador = candidatos->begin();
+
+//     numeroExtremo = (**(iterador++)).estMenMai(estrategiaAtual);
+//     list<Ramo*>::iterator ramoExtremo = candidatos->begin();
+
+//     while (iterador != candidatos->end()) {
+
+//         unsigned int extremo = (*(iterador++))->estMenMai(estrategiaAtual);
+
+//         //se o extremo do ramo atual for mais extremo do que o global atual, atualiza o global
+//         if ((extremo > numeroExtremo && estrategiaAtual == est_mai) || (extremo < numeroExtremo && estrategiaAtual == est_men)) {
+//             numeroExtremo = extremo;
+//             ramoExtremo = iterador;
+//         }
+//     }
+
+//     iterador = candidatos->begin();
+//     list<unsigned int>::iterator iteradorExtremos = numerosDeOrdemExtremos.begin();
+
+//     //Remove da lista todos os ramos antes do ramo com o extremo global 
+//     ramoExtremo = candidatos->erase(candidatos->begin(), ramoExtremo);
+    
+//     //E remove todos depois
+//     ++ramoExtremo;
+//     candidatos->erase(ramoExtremo, candidatos->begin());
+
+// }
 
 
 void Provador::EncontrarPeqGrd(tiposEstrategia estrategiaAtual, list<Ramo*>* candidatos) {
@@ -310,7 +351,7 @@ list<FormulaAtomica> Provador::Resolver(){
         }
 
 
-        Ramo* novoRamo = (*ramoEscolhido)->aplicar(estrategia);
+        Ramo* novoRamo = (*ramoEscolhido)->aplicar(estrategia, &proxNumOrdem);
         
         if (erro) break;
 

@@ -3,11 +3,6 @@
 
 #include "token.h"
 
-enum TiposFormula {
-    atomica,
-    binaria,
-    unaria,
-};
 
 enum Valor { // representa se a fórmula marcada é verdadeira, falsa, ou se ainda não foi avaliada (IND)
     V,F,IND
@@ -42,9 +37,10 @@ class FormulaMarcada {
         //função que retorna uma string representando a fórmula
         virtual string escreve() = 0; 
 
-        //guarda o número de ordem da fórmula
-        unsigned int ordem; 
-        TiposFormula tipo; 
+        //Escreve a fórmula junto com seu valor
+        virtual string escreveValorada();
+
+        //TiposFormula tipo; 
 
         //expande a fórmula e guarda. A primeira posição de resultado será a fórmula "à esquerda", e a segunda (se houver) a "à direita"
         virtual void expandir(FormulaMarcada** resultado) = 0;
@@ -64,9 +60,9 @@ class FormulaMarcada {
         //Escreve o nome da regra que seria aplicada na fórmula
         virtual string nomeRegra() = 0;
 
-        ~FormulaMarcada();
+        virtual ~FormulaMarcada();
 
-        virtual string escreveValorada();
+
 
 };
 
@@ -94,7 +90,8 @@ class FormulaBinaria : public FormulaMarcada {
     private: 
         FormulaMarcada *esquerda, *direita;
         Token operador;
-
+        //Converte um tipoToken para um operador
+        static Token operadorDeTipo(tiposToken op);
     public:
 
         FormulaBinaria(FormulaMarcada *Esquerda, tiposToken op,  FormulaMarcada *Direita);
@@ -126,4 +123,16 @@ class FormulaUnaria : public FormulaMarcada {
         string nomeRegra() override;
 };
 
+
+//classe usada para representar um bloco com seu número de ordem
+class FormulaOrdenada {
+    public:
+        FormulaMarcada* formula;
+        unsigned int ordem;
+
+        FormulaOrdenada(FormulaMarcada* Formula, unsigned int Ordem);
+        FormulaOrdenada();
+        //gera uma lista de fórmulas com número de ordem a partir da lista de fórmulas normal (usada para inicializar o primeiro ramo)
+        static list<FormulaOrdenada> gerarLista(list<FormulaMarcada*> listaFormulas);
+};
 #endif

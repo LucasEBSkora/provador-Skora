@@ -49,8 +49,10 @@ int main () {
     if (interpretador.erro) cout << "erro na construção das formulas!\n";
 
     //imprime as fórmulas, seus tamanhos, valores e números de ordem
-    for(list<FormulaMarcada*>::iterator i = listaFormulas.begin(); i != listaFormulas.end(); ++i) {
-        cout << (**i).ordem << ": " << (**i).escreveValorada() << " Tamanho:" << (**i).tamanho() << " " << (**i).contemOp(E) << "\n";
+    int contador = 1;
+    for (list<FormulaMarcada*>::iterator i = listaFormulas.begin(); i != listaFormulas.end(); ++i) {
+        cout << contador << ": " << (**i).escreveValorada() << " Tamanho:" << (**i).tamanho();
+        ++contador;
     }
     cout <<"\nAtomos : {" ;
 

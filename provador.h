@@ -18,18 +18,21 @@ class Provador {
         void EncontrarPeqGrd(tiposEstrategia estrategiaAtual, list<Ramo*>* candidatos);
         void EncontrarOp(tiposEstrategia estrategiaAtual, list<Ramo*>* candidatos);
         
-        bool erro = false;
+        //número de ordem da próxima fórmula adicionada ao tablô
+        unsigned int proxNumOrdem;        
+
 
     public:
 
-        Provador(list<FormulaMarcada*> ListaFormulas, list<FormulaAtomica> atomos)
-        : listaFormulas(ListaFormulas), valoracaoContraExemplo(atomos) {}
+        Provador(list<FormulaMarcada*> ListaFormulas, list<FormulaAtomica> atomos);
         //processa a string de entrada da estratégia e retorna se ela é valida
         bool validarEstrategia(string Estrategia); 
         
         //resolve o tablô, retornando uma valoração contra-exemplo se o sequente não for válido, e uma lista vazia se for
         list<FormulaAtomica> Resolver(); 
         
+        bool erro = false;
+
 
 };
 

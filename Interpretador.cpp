@@ -153,7 +153,6 @@ list<FormulaMarcada*> Interpretador::Analisar() {
 
     list<Token>::iterator iterador = listaTokens.begin();
     bool encontrouFinal = false;
-    unsigned int numeroDeOrdem = 1;
     while (iterador != listaTokens.end()) {
 
         //limpa a lista de tokens para começar a fórmula seguinte
@@ -168,7 +167,6 @@ list<FormulaMarcada*> Interpretador::Analisar() {
 
         //cria a fórmula, adiciona seu número de ordem e a valora, colocando-a na lista
         FormulaMarcada* form = formula();
-        form->ordem = numeroDeOrdem++;
         form->valorar((encontrouFinal ? F : V)); // se a fórmula está a direita, marca-a como falsa. se é uma das fórmulas da esquerda, a marca como verdadeira.
         listaFormulas.push_back(form);
 
